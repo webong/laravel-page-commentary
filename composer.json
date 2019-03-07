@@ -1,0 +1,42 @@
+{
+    "name": "creativitykills/commentary",
+    "description": "Adds a commentary section to your laravel page",
+    "license": "license",
+    "authors": [{
+        "name": "Neo Ighodaro",
+        "email": "neo@creativitykills.co",
+        "homepage": "https://creativitykills.co",
+        "role": "Developer"
+    }],
+    "homepage": "https://github.com/creativitykills/laravel-commentary",
+    "keywords": ["laravel", "commentary", "creativitykills"],
+    "require": {
+        "illuminate/support": "~5"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~7.0",
+        "mockery/mockery": "^1.1",
+        "orchestra/testbench": "~3.0",
+        "sempro/phpunit-pretty-print": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "CreativityKills\\Commentary\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "CreativityKills\\Commentary\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "CreativityKills\\Commentary\\CommentaryServiceProvider"
+            ],
+            "aliases": {
+                "Commentary": "CreativityKills\\Commentary\\Facades\\Commentary"
+            }
+        }
+    }
+}
