@@ -14,6 +14,7 @@ class CommentaryController {
 
         if (isset($page)) {
             $comments = $comment->where('page', '=', $page)
+                ->with('commentator')
                 ->orderBy(config('commentary.order_by.by'), config('chatter.order_by.order'));
             $comments = $comments->get();
         }else {
