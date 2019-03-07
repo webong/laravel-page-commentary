@@ -18,8 +18,8 @@ return [
     * This determines how the Comments will be ordered when fetched
     */
     'order_by' => [
-        'order' => 'created_at',
-        'by' => 'ASC',
+        'order' => 'ASC',
+        'by' => 'created_at',
     ],
 
     /*
