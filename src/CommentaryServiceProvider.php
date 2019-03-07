@@ -29,11 +29,6 @@ class CommentaryServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(__DIR__.'/../config/commentary.php', 'commentary');
-
-        // Register the service the package provides.
-        $this->app->singleton('commentary', function ($app) {
-            return new Commentary;
-        });
     }
 
     /**
