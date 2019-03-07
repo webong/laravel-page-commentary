@@ -1,9 +1,5 @@
 <?php
 
-Route::group([
-    'namespace'  => 'CreativityKills\Commentary\Controllers',
-], function () {
-
     // Single comment view.
     Route::get('commentary', 'CommentaryController@index')
         ->name('commentary.subscribe');
@@ -19,5 +15,3 @@ Route::group([
     // Remove user notification to commentary
     Route::post('commentary/subscribe', 'CommentaryController@unsubscribe')
         ->name('commentary.unsubscribe');
-
-});
