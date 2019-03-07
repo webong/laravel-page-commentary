@@ -68,6 +68,7 @@ class CommentaryServiceProvider extends ServiceProvider
             __DIR__.'/../public' => public_path('vendor/creativitykills'),
         ], 'commentary.views');
 
+        // Publishing database migration.
         $this->publishes([
             __DIR__ . '/../database/migrations/' => database_path('migrations'),
         ], 'migrations');
