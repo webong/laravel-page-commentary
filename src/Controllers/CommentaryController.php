@@ -22,19 +22,24 @@ class CommentaryController {
         }
     }
 
-    public function store(Request $request, $page)
+    public function store(Request $request)
     {
+        return $request->path();
         $this->validate([
             'body' => 'required|min:10',
         ]);
 
         $comment = config('commentary.comment_class');
 
-        $comment->create([
+        $comment = $comment->create([
             'user_id' => Auth::user()->id,
-            'page' => $page,
+            'page' => $request->page,
             'body' => strip_tags($request->text),
         ]);
+
+        Pusher::trigger('comments', 'new-comment', $comment, request()->header('X-Socket-Id'));
+
+        return $comment;
     }
 
     public function subscribe($page)

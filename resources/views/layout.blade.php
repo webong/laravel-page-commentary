@@ -33,6 +33,7 @@
     var commentary = new Vue({
         el: '#commentary',
         data: {
+            socketId: null,
             isDisabled: false,
             comments: [
                 { body: 'Learn JavaScript' },
@@ -44,6 +45,7 @@
             addComment(event) {
                 event.preventDefault();
                 this.isDisabled = true;
+                console.log(window.location.pathname);
                 let data = {
                     text: document.getElementById("#body") ,
                 };
@@ -61,13 +63,29 @@
                 }).then(response => {
                     this.isDisabled = true;
                     if (response.ok) {
-                        this.updateComment(data);
+                        this.fetchComments();
                         this.showAlert('Comment posted!');
                     }
                 })
             },
-            updateComments(data) {
+            fetchComments() {
             },
+            subscribe() {
+                var socket = new Pusher('{{ env('PUSHER_APP_KEY')}}', {
+                    cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
+                });
+                // set the socket ID when we connect
+                socket.connection.bind('connected', function() {
+                    this.socketId = socket.connection.socket_id;
+                });
+
+                socket.subscribe('comments')
+                    .bind('new-comment',this.fetchComments);
+            }
         },
+        created() {
+            this.fetchComments();
+            this.subscribe();
+        }
     });
 </script>

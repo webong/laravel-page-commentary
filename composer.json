@@ -11,7 +11,8 @@
     "homepage": "https://github.com/creativitykills/laravel-commentary",
     "keywords": ["laravel", "commentary", "creativitykills"],
     "require": {
-        "illuminate/support": "~5"
+        "illuminate/support": "~5",
+        "pusher/pusher-http-laravel": "^4.2"
     },
     "require-dev": {
         "phpunit/phpunit": "~7.0",
