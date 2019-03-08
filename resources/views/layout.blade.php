@@ -1,61 +1,73 @@
 
-<div id="commentary">
-    <ol>
-        <li v-for="todo in todos">
-            {{ todo.text }}
-        </li>
-    </ol>
-</div>
+<div class="container" id="commentary">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h4>Add comment</h4>
+
+                        <div class="form-group">
+                            <textarea class="form-control" name="body"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <input type="button" v-on:click="addComment" v-bind:disabled="isDisabled" class="btn btn-success" value="Add Comment" />
+                        </div>
+                        <hr />
+
+                        <h4>Display Comments</h4>
+
+                        <div v-for="comment in comments">
+                            <strong>@{{ 'User Name' }}</strong>
+                            <p>@{{ comment.body }}</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 <!-- Add Vue Code -->
 <script>
     var commentary = new Vue({
         el: '#commentary',
         data: {
-            todos: [
-                { text: 'Learn JavaScript' },
-                { text: 'Learn Vue' },
-                { text: 'Build something awesome' }
+            isDisabled: false,
+            comments: [
+                { body: 'Learn JavaScript' },
+                { body: 'Learn Vue' },
+                { body: 'Build something awesome' }
             ]
         },
         methods: {
-            displayComment(data) {
-                let $comment = $('<div>').text(data['text']).prepend($('<small>').html(data['username'] + "<br>"));
-                $('#comments').prepend($comment);
-            },
             addComment(event) {
-                function showAlert(message) {
-                    let $alert = $('#alert');
-                    $alert.text(message).show();
-                    setTimeout(() => $alert.hide(), 4000);
-                }
-
                 event.preventDefault();
-                $('#addCommentBtn').attr('disabled', 'disabled');
+                this.isDisabled = true;
                 let data = {
-                    text: $('#text').val(),
-                    username: $('#username').val(),
+                    text: document.getElementById("#body") ,
                 };
-                fetch('/comments', {
+                let token = document.head.querySelector('meta[name="csrf-token"]');
+                fetch('{{ route('commentary.add') }}', {
                     body: JSON.stringify(data),
                     credentials: 'same-origin',
                     headers: {
                         'content-type': 'application/json',
-                        'x-csrf-token': $('meta[name="csrf-token"]').attr('content'),
+                        'x-csrf-token': token.content,
                         'x-socket-id': window.socketId
                     },
                     method: 'POST',
                     mode: 'cors',
                 }).then(response => {
-                    $('#addCommentBtn').removeAttr('disabled');
+                    this.isDisabled = true;
                     if (response.ok) {
-                        displayComment(data);
-                        showAlert('Comment posted!');
-                    } else {
-                        showAlert('Your comment was not approved for posting. Please be nicer :)');
+                        this.updateComment(data);
+                        this.showAlert('Comment posted!');
                     }
                 })
-            }
+            },
+            updateComments(data) {
+            },
         },
     });
 </script>

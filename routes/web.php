@@ -2,11 +2,11 @@
 
     // Single comment view.
     Route::get('commentary', 'CommentaryController@index')
-        ->name('commentary.subscribe');
+        ->name('commentary.show');
 
     // Store comment action.
-    Route::post('/commentary', 'CommentaryController@store')
-        ->name('commentary.subscribe');
+    Route::post('commentary', 'CommentaryController@store')
+        ->name('commentary.add');
 
     // Add user notification to commentary
     Route::post('commentary/subscribe', 'CommentaryController@subscribe')
