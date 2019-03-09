@@ -1,4 +1,7 @@
 
+@php
+ $path = Request::path();
+@endphp
 <div class="container" id="commentary">
         <div class="row justify-content-center">
             <div class="col-md-8">
@@ -7,10 +10,10 @@
                         <h4>Add comment</h4>
 
                         <div class="form-group">
-                            Name: <input type="text" class="form-control col-3" id="commentator">
+                            Name: <input type="text" v-model="username" class="form-control col-3">
                         </div>
                         <div class="form-group">
-                            <textarea class="form-control" id="comment" placeholder="Enter your comment"></textarea>
+                            <textarea class="form-control" v-model="text" placeholder="Enter your comment"></textarea>
                         </div>
                         <div class="form-group">
                             <input type="button" v-on:click="addComment" v-bind:disabled="isDisabled" class="btn btn-success" value="Add Comment" />
@@ -20,8 +23,8 @@
                         <h4>Display Comments</h4>
 
                         <div v-for="comment in comments">
-                            <strong>@{{ 'User Name' }}</strong>
-                            <p>@{{ comment.body }}</p>
+                            <strong>@{{ comment.username }}</strong>
+                            <p>@{{ comment.text }}</p>
                         </div>
 
                     </div>
@@ -36,13 +39,11 @@
     var commentary = new Vue({
         el: '#commentary',
         data: {
+            username: null,
+            text: null,
             path: window.location.pathname,
             isDisabled: false,
-            comments: [
-                { body: 'Learn JavaScript' },
-                { body: 'Learn Vue' },
-                { body: 'Build something awesome' }
-            ]
+            comments: []
         },
         methods: {
             subscribe() {
@@ -53,7 +54,14 @@
                     .bind('new-comment', this.fetchComments);
             },
             fetchComments() {
-
+                var vm = this;
+                fetch('{{ route('commentary.index') . '?' . 'path=' . $path }}')
+                .then(function(response) {
+                    return response.json()
+                })
+                .then(function(json) {
+                    vm.comments = json
+                })
             },
             addComment(event) {
                 event.preventDefault();
@@ -61,8 +69,8 @@
                 console.log(this.path);
                 let data = {
                     path: this.path,
-                    text: document.getElementById("#comment"),
-                    username: document.getElementById("#commentator"),
+                    text: this.text,
+                    username: this.username,
                 };
                 let token = document.head.querySelector('meta[name="csrf-token"]');
                 fetch('{{ route('commentary.store') }}', {
@@ -78,6 +86,8 @@
                 }).then(response => {
                     this.isDisabled = false;
                     if (response.ok) {
+                        this.username = '';
+                        this.text = '';
                         this.fetchComments();
                     }
                 })

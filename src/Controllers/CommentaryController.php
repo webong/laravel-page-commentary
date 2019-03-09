@@ -9,15 +9,15 @@ use Illuminate\Routing\Controller as Controller;
 
 class CommentaryController extends Controller {
 
-    public function index()
+    public function index(Request $request)
     {
-        $pagination_number = config('commentary.paginate_number');
         $comment = new Comment;
 
         if (isset($request->path)) {
-            $comments = $comment->where('page', '=', $request->path)
+            $comments = $comment->where('path', '=', $request->path)
                 ->orderBy(config('commentary.order_by.by'), config('chatter.order_by.order'))
-                ->paginate($pagination_number);
+                ->get();
+                return response()->json($comments);
         }else {
             return response()->json([]);
         }
@@ -26,8 +26,8 @@ class CommentaryController extends Controller {
     public function store(Request $request)
     {
         $comment = Comment::create([
-            'page' => $request->path,
-            'username' => $request->name,
+            'path' => $request->path,
+            'username' => $request->username,
             'text' => $request->text,
         ]);
 
