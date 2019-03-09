@@ -36,6 +36,8 @@
 
 <!-- Add Vue Code -->
 <script>
+    Pusher.logToConsole = true;
+
     var commentary = new Vue({
         el: '#commentary',
         data: {
@@ -50,7 +52,7 @@
                 var pusher = new Pusher('{{ env('PUSHER_APP_KEY')}}', {
                     cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
                 });
-                pusher.subscribe(this.path)
+                pusher.subscribe('chanel-pusher/moimoi')
                     .bind('new-comment', this.fetchComments);
             },
             fetchComments() {
@@ -66,7 +68,6 @@
             addComment(event) {
                 event.preventDefault();
                 this.isDisabled = true;
-                console.log(this.path);
                 let data = {
                     path: this.path,
                     text: this.text,

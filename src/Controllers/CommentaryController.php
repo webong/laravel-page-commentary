@@ -4,8 +4,10 @@ namespace CreativityKills\Commentary\Controllers;
 use Illuminate\Http\Request;
 use Pusher\Laravel\Facades\Pusher;
 use Illuminate\Support\Facades\Auth;
+use CreativityKills\Commentary\Models\Page;
 use CreativityKills\Commentary\Models\Comment;
 use Illuminate\Routing\Controller as Controller;
+use CreativityKills\Commentary\Events\CommentAdded;
 
 class CommentaryController extends Controller {
 
@@ -25,13 +27,15 @@ class CommentaryController extends Controller {
 
     public function store(Request $request)
     {
-        $comment = Comment::create([
-            'path' => $request->path,
+        $post = Page::firstorCreate(['path' => $request->path]);
+
+        $comments = $post->comments->create([
             'username' => $request->username,
             'text' => $request->text,
         ]);
 
-        // Pusher::trigger('commentary', 'comment-added', $comment, request()->header('X-Socket-Id'));
+        broadcast(new CommentAdded($post->id, $request->username, $request->text ))
+            ->toOthers();
 
         return $comment;
     }

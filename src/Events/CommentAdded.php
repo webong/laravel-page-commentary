@@ -1,6 +1,6 @@
 <?php
 
-namespace CreativityKills\Commentable\Events;
+namespace CreativityKills\Commentary\Events;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
@@ -10,7 +10,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class CommentableAction
+class CommentAdded
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -31,6 +31,6 @@ class CommentableAction
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('channel-name');
+        return new Channel($this->page);
     }
 }
