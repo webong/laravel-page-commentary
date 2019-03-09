@@ -24,7 +24,6 @@ class CommentaryController {
 
     public function store(Request $request)
     {
-        return $request->path();
         $this->validate([
             'body' => 'required|min:10',
         ]);
@@ -33,7 +32,7 @@ class CommentaryController {
 
         $comment = $comment->create([
             'user_id' => Auth::user()->id,
-            'page' => $request->page,
+            'page' => $request->path(),
             'body' => strip_tags($request->text),
         ]);
 

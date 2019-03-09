@@ -1,5 +1,5 @@
 {
-    "name": "creativitykills/commentary",
+    "name": "creativitykills/laravel-commentary",
     "description": "Adds a commentary section to your laravel page",
     "license": "license",
     "authors": [{
@@ -39,5 +39,7 @@
                 "Commentary": "CreativityKills\\Commentary\\Facades\\Commentary"
             }
         }
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
