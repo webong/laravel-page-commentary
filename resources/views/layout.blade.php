@@ -36,8 +36,7 @@
     var commentary = new Vue({
         el: '#commentary',
         data: {
-            path: window.location.pathname
-            socketId: null,
+            path: window.location.pathname,
             isDisabled: false,
             comments: [
                 { body: 'Learn JavaScript' },
@@ -46,66 +45,47 @@
             ]
         },
         methods: {
-            addComment(event) {
-                event.preventDefault();
-                this.isDisabled = true;
-                let data = {
-                    path: this.path
-                    text: document.getElementById("#comment"),
-                    username: document.getElementById("#commentator"),
-                };
-                let token = document.head.querySelector('meta[name="csrf-token"]');
-                fetch('{{ route('commentary.add') }}', {
-                    body: JSON.stringify(data),
-                    credentials: 'same-origin',
-                    headers: {
-                        'content-type': 'application/json',
-                        'x-csrf-token': token.content,
-                        'x-socket-id': this.socketId
-                    },
-                    method: 'POST',
-                    mode: 'cors',
-                }).then(response => {
-                    this.isDisabled = false;
-                    if (response.ok) {
-                        this.fetchComments();
-                    }
-                })
-            },
-            fetchComments() {
-                fetch('{{ route('commentary.show') }}', {
-                    body: JSON.stringify(data),
-                    credentials: 'same-origin',
-                    headers: {
-                        'content-type': 'application/json',
-                        'x-csrf-token': token.content,
-                        'x-socket-id': this.socketId
-                    },
-                    method: 'POST',
-                    mode: 'cors',
-                }).then(response => {
-                    this.isDisabled = false;
-                    if (response.ok) {
-                        this.fetchComments();
-                    }
-                })
-            },
             subscribe() {
                 var pusher = new Pusher('{{ env('PUSHER_APP_KEY')}}', {
                     cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
                 });
-                // set the socket ID when we connect
-                pusher.connection.bind('connected', function() {
-                    this.socketId = socket.connection.socket_id;
-                });
-                var fetchComments
                 pusher.subscribe(this.path)
                     .bind('new-comment', this.fetchComments);
-            }
+            },
+            fetchComments() {
+
+            },
+            addComment(event) {
+                event.preventDefault();
+                this.isDisabled = true;
+                console.log(this.path);
+                let data = {
+                    path: this.path,
+                    text: document.getElementById("#comment"),
+                    username: document.getElementById("#commentator"),
+                };
+                let token = document.head.querySelector('meta[name="csrf-token"]');
+                fetch('{{ route('commentary.store') }}', {
+                    body: JSON.stringify(data),
+                    credentials: 'same-origin',
+                    headers: {
+                        'content-type': 'application/json',
+                        'x-csrf-token': token.content,
+                        'x-socket-id': this.socketId
+                    },
+                    method: 'POST',
+                    mode: 'cors',
+                }).then(response => {
+                    this.isDisabled = false;
+                    if (response.ok) {
+                        this.fetchComments();
+                    }
+                })
+            },
         },
         created() {
-            this.fetchComments();
             this.subscribe();
+            this.fetchComments();
         }
     });
 </script>
