@@ -20,13 +20,6 @@ class CreateCommentaryTables extends Migration
             $table->text('text');
             $table->timestamps();
         });
-
-        Schema::create('commentary_user_subscriptions', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('user_id')->unsigned();
-            $table->text('page');
-            $table->timestamps();
-        });
     }
 
     /**
@@ -37,6 +30,5 @@ class CreateCommentaryTables extends Migration
     public function down()
     {
         Schema::dropIfExists('commentary_comments');
-        Schema::dropIfExists('commentary_user_subscriptions');
     }
 }
