@@ -1,6 +1,6 @@
 <?php
 
-namespace CreativityKills\Commentary\Events;
+namespace App\Events;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
@@ -14,14 +14,18 @@ class CommentAdded
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    public $page;
+    public $username;
+
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($page, $username)
     {
-        //
+        $this->page = $page;
+        $this->username = $username;
     }
 
     /**
@@ -31,6 +35,11 @@ class CommentAdded
      */
     public function broadcastOn()
     {
-        return new Channel($this->page);
+        return new Channel('page-'.$this->page);
+    }
+
+    public function broadcastAs()
+    {
+        return 'new-comment';
     }
 }

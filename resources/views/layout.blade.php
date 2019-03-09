@@ -45,14 +45,15 @@
             text: null,
             path: window.location.pathname,
             isDisabled: false,
-            comments: []
+            comments: [],
+            page: [],
         },
         methods: {
             subscribe() {
                 var pusher = new Pusher('{{ env('PUSHER_APP_KEY')}}', {
                     cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
                 });
-                pusher.subscribe('chanel-pusher/moimoi')
+                pusher.subscribe('1')
                     .bind('new-comment', this.fetchComments);
             },
             fetchComments() {
@@ -62,7 +63,8 @@
                     return response.json()
                 })
                 .then(function(json) {
-                    vm.comments = json
+                    vm.page = json.page
+                    vm.comments = json.comments
                 })
             },
             addComment(event) {
@@ -95,8 +97,8 @@
             },
         },
         created() {
-            this.subscribe();
             this.fetchComments();
+            this.subscribe();
         }
     });
 </script>

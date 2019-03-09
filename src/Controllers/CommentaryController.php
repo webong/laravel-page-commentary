@@ -13,13 +13,17 @@ class CommentaryController extends Controller {
 
     public function index(Request $request)
     {
-        $comment = new Comment;
-
         if (isset($request->path)) {
-            $comments = $comment->where('path', '=', $request->path)
+            $page = Page::firstorCreate(['path' => $request->path]);
+
+            $comments = $page->comments()
                 ->orderBy(config('commentary.order_by.by'), config('chatter.order_by.order'))
                 ->get();
-                return response()->json($comments);
+
+            return response()->json([
+                'page' => $page,
+                'comments' => $comments
+            ]);
         }else {
             return response()->json([]);
         }
@@ -27,14 +31,14 @@ class CommentaryController extends Controller {
 
     public function store(Request $request)
     {
-        $post = Page::firstorCreate(['path' => $request->path]);
+        $page = Page::firstorCreate(['path' => $request->path]);
 
-        $comments = $post->comments->create([
+        $comment = $page->comments()->create([
             'username' => $request->username,
             'text' => $request->text,
         ]);
 
-        broadcast(new CommentAdded($post->id, $request->username, $request->text ))
+        broadcast(new CommentAdded($page->id, $request->username, $request->text ))
             ->toOthers();
 
         return $comment;
