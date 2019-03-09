@@ -10,7 +10,7 @@
                         <h4>Add comment</h4>
 
                         <div class="form-group">
-                            Name: <input type="text" v-model="username" class="form-control col-3">
+                            <input type="text" v-model="username" class="form-control col-4" placeholder="Enter your username">
                         </div>
                         <div class="form-group">
                             <textarea class="form-control" v-model="text" placeholder="Enter your comment"></textarea>
