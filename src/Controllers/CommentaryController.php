@@ -2,21 +2,21 @@
 namespace CreativityKills\Commentary\Controllers;
 
 use Illuminate\Http\Request;
+use Pusher\Laravel\Facades\Pusher;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Routing\Controller as Controller;
 
-class CommentaryController {
+class CommentaryController extends Controller {
 
-    public function index($page)
+    public function index()
     {
         $pagination_results = config('commentary.paginate_number');
         $comment = config('commentary.comment_class');
 
-        if (isset($page)) {
-            $comments = $comment->where('page', '=', $page)
-                ->with('commentator')
-                ->orderBy(config('commentary.order_by.by'), config('chatter.order_by.order'));
-            $comments = $comments->get();
+        if (isset($request->path)) {
+            $comments = $comment->where('page', '=', $request->path)
+                ->orderBy(config('commentary.order_by.by'), config('chatter.order_by.order'))
+                ->get();
         }else {
             return response()->json([]);
         }
@@ -24,19 +24,15 @@ class CommentaryController {
 
     public function store(Request $request)
     {
-        $this->validate([
-            'body' => 'required|min:10',
-        ]);
-
         $comment = config('commentary.comment_class');
 
         $comment = $comment->create([
-            'user_id' => Auth::user()->id,
-            'page' => $request->path(),
-            'body' => strip_tags($request->text),
+            'page' => $request->path,
+            'username' => $request->name,
+            'text' => $request->text,
         ]);
 
-        Pusher::trigger('comments', 'new-comment', $comment, request()->header('X-Socket-Id'));
+        Pusher::trigger('commentary', 'comment-added', $comment, request()->header('X-Socket-Id'));
 
         return $comment;
     }

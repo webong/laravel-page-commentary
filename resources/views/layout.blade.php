@@ -7,7 +7,10 @@
                         <h4>Add comment</h4>
 
                         <div class="form-group">
-                            <textarea class="form-control" name="body"></textarea>
+                            Name: <input type="text" class="form-control col-3" id="commentator">
+                        </div>
+                        <div class="form-group">
+                            <textarea class="form-control" id="comment" placeholder="Enter your comment"></textarea>
                         </div>
                         <div class="form-group">
                             <input type="button" v-on:click="addComment" v-bind:disabled="isDisabled" class="btn btn-success" value="Add Comment" />
@@ -33,6 +36,7 @@
     var commentary = new Vue({
         el: '#commentary',
         data: {
+            path: window.location.pathname
             socketId: null,
             isDisabled: false,
             comments: [
@@ -45,9 +49,10 @@
             addComment(event) {
                 event.preventDefault();
                 this.isDisabled = true;
-                console.log(window.location.pathname);
                 let data = {
-                    text: document.getElementById("#body") ,
+                    path: this.path
+                    text: document.getElementById("#comment"),
+                    username: document.getElementById("#commentator"),
                 };
                 let token = document.head.querySelector('meta[name="csrf-token"]');
                 fetch('{{ route('commentary.add') }}', {
@@ -56,31 +61,46 @@
                     headers: {
                         'content-type': 'application/json',
                         'x-csrf-token': token.content,
-                        'x-socket-id': window.socketId
+                        'x-socket-id': this.socketId
                     },
                     method: 'POST',
                     mode: 'cors',
                 }).then(response => {
-                    this.isDisabled = true;
+                    this.isDisabled = false;
                     if (response.ok) {
                         this.fetchComments();
-                        this.showAlert('Comment posted!');
                     }
                 })
             },
             fetchComments() {
+                fetch('{{ route('commentary.show') }}', {
+                    body: JSON.stringify(data),
+                    credentials: 'same-origin',
+                    headers: {
+                        'content-type': 'application/json',
+                        'x-csrf-token': token.content,
+                        'x-socket-id': this.socketId
+                    },
+                    method: 'POST',
+                    mode: 'cors',
+                }).then(response => {
+                    this.isDisabled = false;
+                    if (response.ok) {
+                        this.fetchComments();
+                    }
+                })
             },
             subscribe() {
-                var socket = new Pusher('{{ env('PUSHER_APP_KEY')}}', {
+                var pusher = new Pusher('{{ env('PUSHER_APP_KEY')}}', {
                     cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
                 });
                 // set the socket ID when we connect
-                socket.connection.bind('connected', function() {
+                pusher.connection.bind('connected', function() {
                     this.socketId = socket.connection.socket_id;
                 });
-
-                socket.subscribe('comments')
-                    .bind('new-comment',this.fetchComments);
+                var fetchComments
+                pusher.subscribe(this.path)
+                    .bind('new-comment', this.fetchComments);
             }
         },
         created() {
