@@ -49,13 +49,6 @@
             page: [],
         },
         methods: {
-            subscribe() {
-                var pusher = new Pusher('{{ env('PUSHER_APP_KEY')}}', {
-                    cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
-                });
-                pusher.subscribe('1')
-                    .bind('new-comment', this.fetchComments);
-            },
             fetchComments() {
                 var vm = this;
                 fetch('{{ route('commentary.index') . '?' . 'path=' . $path }}')
@@ -65,6 +58,7 @@
                 .then(function(json) {
                     vm.page = json.page
                     vm.comments = json.comments
+                    vm.subscribe();
                 })
             },
             addComment(event) {
@@ -95,10 +89,16 @@
                     }
                 })
             },
+            subscribe() {
+                var pusher = new Pusher('{{ env('PUSHER_APP_KEY')}}', {
+                    cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
+                });
+                pusher.subscribe('page-' + this.page.id)
+                    .bind('new-comment', this.fetchComments);
+            },
         },
         created() {
             this.fetchComments();
-            this.subscribe();
         }
     });
 </script>

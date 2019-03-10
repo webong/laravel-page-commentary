@@ -38,9 +38,8 @@ class CommentaryController extends Controller {
             'text' => $request->text,
         ]);
 
-        broadcast(new CommentAdded($page->id, $request->username, $request->text ))
-            ->toOthers();
-
+        Pusher::trigger('page-'.$page->id, 'new-comment', $comment);
+    
         return $comment;
     }
 }
