@@ -5,7 +5,7 @@ return [
     * This determines how the Comments will be ordered when fetched
     */
     'order_by' => [
-        'order' => 'ASC',
+        'order' => 'DESC',
         'by' => 'created_at',
     ],
 

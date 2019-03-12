@@ -1,38 +1,35 @@
 
-@php
- $path = Request::path();
-@endphp
+
 <div class="container" id="commentary">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-body">
-                        <h4>Add comment</h4>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h4>Add comment</h4>
 
-                        <div class="form-group">
-                            <input type="text" v-model="username" class="form-control col-4" placeholder="Enter your username">
-                        </div>
-                        <div class="form-group">
-                            <textarea class="form-control" v-model="text" placeholder="Enter your comment"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <input type="button" v-on:click="addComment" v-bind:disabled="isDisabled" class="btn btn-success" value="Add Comment" />
-                        </div>
-                        <hr />
-
-                        <h4>Display Comments</h4>
-
-                        <div v-for="comment in comments">
-                            <strong>@{{ comment.username }}</strong>
-                            <p>@{{ comment.text }}</p>
-                        </div>
-
+                    <div class="form-group">
+                        <input type="text" v-model="username" class="form-control col-4" placeholder="Enter your username">
                     </div>
+                    <div class="form-group">
+                        <textarea class="form-control" v-model="text" placeholder="Enter your comment"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <input type="button" v-on:click="addComment" v-bind:disabled="isDisabled" class="btn btn-success" value="Add Comment" />
+                    </div>
+                    <hr />
+
+                    <h4>Display Comments</h4>
+
+                    <div v-for="comment in comments">
+                        <strong>@{{ comment.username }}</strong>
+                        <p>@{{ comment.text }}</p>
+                    </div>
+
                 </div>
             </div>
         </div>
     </div>
-
+</div>
 
 <!-- Add Vue Code -->
 <script>
@@ -51,7 +48,8 @@
         methods: {
             fetchComments() {
                 var vm = this;
-                fetch('{{ route('commentary.index') . '?' . 'path=' . $path }}')
+                var url = '{{ route('commentary.index') }}' + '?path=' + this.path;
+                fetch(url)
                 .then(function(response) {
                     return response.json()
                 })

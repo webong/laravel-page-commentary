@@ -3,11 +3,9 @@ namespace CreativityKills\Commentary\Controllers;
 
 use Illuminate\Http\Request;
 use Pusher\Laravel\Facades\Pusher;
-use Illuminate\Support\Facades\Auth;
 use CreativityKills\Commentary\Models\Page;
 use CreativityKills\Commentary\Models\Comment;
 use Illuminate\Routing\Controller as Controller;
-use CreativityKills\Commentary\Events\CommentAdded;
 
 class CommentaryController extends Controller {
 
@@ -17,9 +15,8 @@ class CommentaryController extends Controller {
             $page = Page::firstorCreate(['path' => $request->path]);
 
             $comments = $page->comments()
-                ->orderBy(config('commentary.order_by.by'), config('chatter.order_by.order'))
+                ->orderBy(config('commentary.order_by.by'), config('commentary.order_by.order'))
                 ->get();
-
             return response()->json([
                 'page' => $page,
                 'comments' => $comments
@@ -39,7 +36,7 @@ class CommentaryController extends Controller {
         ]);
 
         Pusher::trigger('page-'.$page->id, 'new-comment', $comment);
-    
+
         return $comment;
     }
 }

@@ -23,8 +23,6 @@ class CommentaryServiceProvider extends ServiceProvider
                 $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
             });
 
-        $this->registerEventListeners();
-
         // Publishing is only necessary when using the CLI.
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
@@ -75,12 +73,4 @@ class CommentaryServiceProvider extends ServiceProvider
         ], 'migrations');
     }
 
-    /**
-     * Register the packages event listeners.
-     */
-    protected function registerEventListeners()
-    {
-        $this->app['events']->listen(UserSubscribed::class, SendSubscriptionNotification::class);
-        $this->app['events']->listen(UserUnsubscribed::class, SendUnsubscribeNotification::class);
-    }
 }

@@ -35,6 +35,7 @@ class CreateCommentaryTables extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('commentary_pages');
         Schema::dropIfExists('commentary_comments');
     }
 }
